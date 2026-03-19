@@ -9,20 +9,20 @@ export default function SettingsPage() {
   const router = useRouter();
   const { state } = useApp();
 
-  const settingsGroups = [
+  const groups = [
     {
       title: 'Account',
       items: [
         { icon: User, label: 'Profile', desc: 'Manage your account' },
         { icon: Bell, label: 'Notifications', desc: 'Push & email settings' },
-        { icon: Shield, label: 'Privacy', desc: 'Security settings' },
+        { icon: Shield, label: 'Privacy', desc: 'Security & privacy' },
       ],
     },
     {
       title: 'App',
       items: [
         { icon: Palette, label: 'Appearance', desc: 'Theme & display' },
-        { icon: Wifi, label: 'NFC Settings', desc: 'Manage NFC products' },
+        { icon: Wifi, label: 'NFC', desc: 'Manage NFC products' },
       ],
     },
     {
@@ -34,45 +34,39 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="p-4 pt-5 md:p-8 animate-fade-in">
-      <h1 className="text-xl md:text-2xl font-bold mb-6">Settings</h1>
+    <div className="px-4 py-5 md:px-8 md:py-7 fade-in">
+      <h1 className="text-xl font-bold mb-5">Settings</h1>
 
-      <div className="max-w-2xl">
-        {/* User card */}
-        <div className="card-flat p-4 md:p-5 mb-6 flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-[var(--accent-light)] flex items-center justify-center">
-            <span className="text-lg font-bold text-[var(--accent)]">
+      <div className="max-w-xl">
+        {/* User */}
+        <div className="card p-4 mb-5 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-[var(--accent-bg)] flex items-center justify-center">
+            <span className="text-base font-bold text-[var(--accent)]">
               {state.user?.full_name ? getInitials(state.user.full_name) : 'U'}
             </span>
           </div>
-          <div className="flex-1">
-            <p className="font-semibold text-[var(--text-primary)]">{state.user?.full_name || 'User'}</p>
-            <p className="text-sm text-[var(--text-muted)]">{state.user?.email || 'demo@airlod.com'}</p>
+          <div>
+            <p className="font-semibold text-[15px]">{state.user?.full_name || 'User'}</p>
+            <p className="text-xs text-[var(--text-muted)]">{state.user?.email || 'demo@airlod.com'}</p>
           </div>
         </div>
 
-        {/* Settings Groups */}
-        {settingsGroups.map(group => (
-          <div key={group.title} className="mb-5">
-            <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2 px-1">
-              {group.title}
-            </h3>
-            <div className="card-flat overflow-hidden divide-y divide-[var(--border)]">
-              {group.items.map(item => {
+        {groups.map(g => (
+          <div key={g.title} className="mb-4">
+            <p className="text-[10px] font-semibold uppercase text-[var(--text-muted)] tracking-wider mb-2 px-1">{g.title}</p>
+            <div className="card overflow-hidden divide-y divide-[var(--border)]">
+              {g.items.map(item => {
                 const Icon = item.icon;
                 return (
-                  <button
-                    key={item.label}
-                    className="w-full flex items-center gap-3 p-4 hover:bg-[var(--bg-secondary)] transition-colors text-left"
-                  >
-                    <div className="w-9 h-9 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center">
+                  <button key={item.label} className="w-full flex items-center gap-3 p-3.5 hover:bg-[var(--bg-hover)] transition text-left">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--bg-muted)] flex items-center justify-center">
                       <Icon className="w-4 h-4 text-[var(--text-secondary)]" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[var(--text-primary)]">{item.label}</p>
-                      <p className="text-xs text-[var(--text-muted)]">{item.desc}</p>
+                      <p className="text-sm font-medium">{item.label}</p>
+                      <p className="text-[11px] text-[var(--text-muted)]">{item.desc}</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
+                    <ChevronRight className="w-4 h-4 text-[var(--text-light)]" />
                   </button>
                 );
               })}
@@ -80,18 +74,10 @@ export default function SettingsPage() {
           </div>
         ))}
 
-        {/* Logout */}
-        <button
-          onClick={() => router.push('/auth/login')}
-          className="card-flat w-full p-4 flex items-center gap-3 text-[var(--danger)] hover:bg-red-50 transition-colors"
-        >
-          <LogOut className="w-5 h-5" />
+        <button onClick={() => router.push('/auth/login')} className="card w-full p-3.5 flex items-center gap-3 text-[var(--danger)] hover:bg-red-50 transition mt-2">
+          <LogOut className="w-4 h-4" />
           <span className="text-sm font-medium">Sign Out</span>
         </button>
-
-        <p className="text-center text-xs text-[var(--text-muted)] mt-6 lg:hidden">
-          AIRLOD v2.0.0
-        </p>
       </div>
     </div>
   );

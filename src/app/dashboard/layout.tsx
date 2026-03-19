@@ -9,20 +9,13 @@ export default function DashboardLayout({
 }) {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-[var(--bg-secondary)]">
-        {/* Desktop Sidebar */}
-        <Sidebar />
-
-        {/* Main Content */}
-        <div className="dashboard-content">
-          <div className="dashboard-inner">
-            {children}
-          </div>
+      <Sidebar />
+      <div className="main-content">
+        <div className="max-w-[1200px] mx-auto">
+          {children}
         </div>
-
-        {/* Mobile Bottom Navigation */}
-        <BottomNav />
       </div>
+      <BottomNav />
     </AppProvider>
   );
 }

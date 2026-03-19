@@ -7,40 +7,26 @@ export default function ScanPage() {
   const [scanning, setScanning] = useState(false);
 
   return (
-    <div className="p-4 pt-5 md:p-8 animate-fade-in">
-      <h1 className="text-xl md:text-2xl font-bold mb-6">Scan</h1>
+    <div className="px-4 py-5 md:px-8 md:py-7 fade-in">
+      <h1 className="text-xl font-bold mb-5">Scan</h1>
 
-      <div className="flex flex-col md:flex-row gap-5 max-w-3xl mx-auto">
-        {/* Scanner */}
-        <div className="card p-6 md:p-8 flex-1 flex flex-col items-center">
-          <div className="w-48 h-48 md:w-56 md:h-56 rounded-2xl border-2 border-dashed border-[var(--accent)] flex items-center justify-center mb-4 relative bg-[var(--accent-light)]/30">
-            {scanning ? (
-              <div className="w-full h-1 bg-[var(--accent)] absolute top-0 animate-pulse rounded" />
-            ) : (
-              <QrCode className="w-14 h-14 text-[var(--text-muted)]" />
-            )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+        <div className="card p-6 flex flex-col items-center text-center">
+          <div className="w-40 h-40 rounded-xl border-2 border-dashed border-[var(--accent)] bg-[var(--accent-bg)] flex items-center justify-center mb-4">
+            <QrCode className="w-10 h-10 text-[var(--text-muted)]" />
           </div>
-          <p className="text-sm text-[var(--text-secondary)] text-center mb-5">
-            Scan a QR code to view a digital business card
-          </p>
-          <button
-            onClick={() => setScanning(!scanning)}
-            className="btn-dark flex items-center gap-2"
-          >
-            <Camera className="w-4 h-4" />
-            {scanning ? 'Stop Scanning' : 'Start Camera'}
+          <p className="text-sm text-[var(--text-secondary)] mb-4">Scan a QR code to view a card</p>
+          <button onClick={() => setScanning(!scanning)} className="btn-solid">
+            <Camera className="w-4 h-4" /> {scanning ? 'Stop' : 'Start Camera'}
           </button>
         </div>
 
-        {/* NFC */}
-        <div className="card p-6 md:p-8 flex-1 flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-[var(--accent-light)] flex items-center justify-center mb-4">
-            <Wifi className="w-8 h-8 text-[var(--accent)]" />
+        <div className="card p-6 flex flex-col items-center text-center">
+          <div className="w-14 h-14 rounded-full bg-[var(--accent-bg)] flex items-center justify-center mb-4">
+            <Wifi className="w-7 h-7 text-[var(--accent)]" />
           </div>
-          <h3 className="font-semibold mb-2">NFC Ready</h3>
-          <p className="text-sm text-[var(--text-secondary)] text-center">
-            Hold an NFC card or tag near your device to read it
-          </p>
+          <h3 className="font-semibold text-sm mb-1">NFC Ready</h3>
+          <p className="text-xs text-[var(--text-muted)]">Hold an NFC tag near your device</p>
         </div>
       </div>
     </div>

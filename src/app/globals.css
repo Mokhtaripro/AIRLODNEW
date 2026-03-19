@@ -1,49 +1,48 @@
 @import "tailwindcss";
 
 :root {
-  /* Light theme - Popl-inspired */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8f9fa;
-  --bg-tertiary: #f1f3f5;
-  --bg-hover: #f0f1f3;
-  --border: #e5e7eb;
-  --border-strong: #d1d5db;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --accent: #00b4d8;
-  --accent-light: #e0f7fa;
-  --accent-hover: #0096b7;
-  --success: #22c55e;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --sidebar-width: 220px;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-  --radius: 12px;
+  /* Clean professional palette */
+  --bg-page: #f5f6f8;
+  --bg-card: #ffffff;
+  --bg-hover: #f9fafb;
+  --bg-active: #f0f4ff;
+  --bg-muted: #f1f3f5;
+  --border: #e8eaed;
+  --border-hover: #d0d5dd;
+  --text: #1a1d21;
+  --text-secondary: #5f6368;
+  --text-muted: #9aa0a6;
+  --text-light: #bdc1c6;
+  --accent: #1a73e8;
+  --accent-bg: #e8f0fe;
+  --accent-hover: #1557b0;
+  --accent-soft: #4285f4;
+  --success: #34a853;
+  --danger: #ea4335;
+  --warning: #fbbc04;
+  --sidebar-w: 240px;
+  --radius: 10px;
   --radius-sm: 8px;
-  --radius-lg: 16px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 8px -2px rgba(0,0,0,0.06), 0 2px 4px -2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(0,0,0,0.08);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  overflow-x: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg-page);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ========================================
-   SIDEBAR (Desktop only)
-   ======================================== */
+/* ─── Sidebar ───────────────────────────── */
 .sidebar {
   display: none;
 }
@@ -56,103 +55,89 @@ html, body {
     top: 0;
     left: 0;
     bottom: 0;
-    width: var(--sidebar-width);
-    background: var(--bg-primary);
+    width: var(--sidebar-w);
+    background: var(--bg-card);
     border-right: 1px solid var(--border);
     z-index: 40;
     overflow-y: auto;
   }
 }
 
-.sidebar-item {
+.nav-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 14px;
-  margin-bottom: 2px;
+  padding: 10px 12px;
+  margin: 1px 0;
   border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 500;
   color: var(--text-secondary);
-  transition: all 0.15s ease;
   text-decoration: none;
+  transition: all 0.15s;
+  cursor: pointer;
 }
 
-.sidebar-item:hover {
-  color: var(--text-primary);
-  background: var(--bg-secondary);
+.nav-item:hover {
+  color: var(--text);
+  background: var(--bg-hover);
 }
 
-.sidebar-item.active {
-  color: var(--text-primary);
-  background: var(--bg-tertiary);
+.nav-item.active {
+  color: var(--accent);
+  background: var(--accent-bg);
   font-weight: 600;
 }
 
-/* ========================================
-   DASHBOARD CONTENT
-   ======================================== */
-.dashboard-content {
+/* ─── Main content ──────────────────────── */
+.main-content {
   min-height: 100vh;
-  padding-bottom: 80px;
-}
-
-.dashboard-inner {
-  max-width: 1280px;
-  margin: 0 auto;
+  padding-bottom: 76px;
 }
 
 @media (min-width: 1024px) {
-  .dashboard-content {
-    margin-left: var(--sidebar-width);
+  .main-content {
+    margin-left: var(--sidebar-w);
     padding-bottom: 0;
   }
 }
 
-/* ========================================
-   CARD COMPONENTS
-   ======================================== */
-.card {
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  transition: all 0.2s ease;
+/* ─── Bottom nav ────────────────────────── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 4px 0;
+  padding-bottom: max(4px, env(safe-area-inset-bottom));
+  z-index: 50;
 }
 
-.card:hover {
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-strong);
+@media (min-width: 1024px) {
+  .bottom-nav { display: none; }
 }
 
-.card-flat {
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
-/* ========================================
-   INPUTS
-   ======================================== */
+/* ─── Inputs ────────────────────────────── */
 .input {
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  color: var(--text-primary);
-  font-size: 14px;
   width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
   outline: none;
-  transition: all 0.15s ease;
+  transition: border 0.15s, box-shadow 0.15s;
 }
 
 .input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(0, 180, 216, 0.1);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.12);
 }
 
-.input::placeholder {
-  color: var(--text-muted);
-}
+.input::placeholder { color: var(--text-light); }
 
 .input-lg {
   padding: 12px 16px;
@@ -160,436 +145,301 @@ html, body {
   border-radius: var(--radius);
 }
 
-/* ========================================
-   BUTTONS
-   ======================================== */
+/* ─── Buttons ───────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border-radius: var(--radius-sm);
-  padding: 9px 18px;
+  gap: 6px;
   font-size: 14px;
   font-weight: 500;
+  border-radius: var(--radius-sm);
+  padding: 9px 16px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  border: 1px solid transparent;
+  transition: all 0.15s;
+  border: none;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-primary {
   background: var(--accent);
-  color: white;
-  border-color: var(--accent);
-  border-radius: var(--radius-sm);
-  padding: 9px 18px;
-  font-size: 14px;
+  color: #fff;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-primary:hover {
-  background: var(--accent-hover);
-  border-color: var(--accent-hover);
-}
-
-.btn-secondary {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
   padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-outline {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1.5px solid var(--border);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.btn-outline:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-hover);
 }
 
-.btn-secondary:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-strong);
-}
-
-.btn-dark {
-  background: var(--text-primary);
-  color: white;
-  border-radius: var(--radius-sm);
+.btn-solid {
+  background: var(--text);
+  color: #fff;
+  border: none;
   padding: 9px 18px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
-  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
 }
-
-.btn-dark:hover {
-  opacity: 0.9;
-}
+.btn-solid:hover { opacity: 0.92; }
 
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
   border: none;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
   font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-ghost:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-/* ========================================
-   BOTTOM NAVIGATION (Mobile only)
-   ======================================== */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--bg-primary);
-  border-top: 1px solid var(--border);
-  padding: 6px 0;
-  padding-bottom: max(6px, env(safe-area-inset-bottom));
-  z-index: 50;
-}
-
-@media (min-width: 1024px) {
-  .bottom-nav {
-    display: none;
-  }
-}
-
-/* ========================================
-   TABLE
-   ======================================== */
-.table-header {
-  display: grid;
-  padding: 10px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--border);
-}
-
-.table-row {
-  display: grid;
-  padding: 12px 16px;
+  display: inline-flex;
   align-items: center;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.1s ease;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.btn-ghost:hover {
+  background: var(--bg-muted);
+  color: var(--text);
 }
 
-.table-row:hover {
-  background: var(--bg-secondary);
+/* ─── Card ──────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
 }
 
-.table-row:last-child {
-  border-bottom: none;
+.card-hover:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-hover);
 }
 
-/* ========================================
-   TOGGLE SWITCH
-   ======================================== */
+/* ─── Toggle ────────────────────────────── */
 .toggle {
   position: relative;
-  width: 44px;
-  height: 24px;
-  background: var(--bg-tertiary);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  width: 40px;
+  height: 22px;
+  background: var(--bg-muted);
   border: 1px solid var(--border);
+  border-radius: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
   flex-shrink: 0;
 }
-
 .toggle.active {
   background: var(--accent);
   border-color: var(--accent);
 }
-
 .toggle::after {
   content: '';
   position: absolute;
-  width: 18px;
-  height: 18px;
-  background: white;
+  width: 16px;
+  height: 16px;
+  background: #fff;
   border-radius: 50%;
   top: 2px;
   left: 2px;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
+.toggle.active::after { left: 20px; }
 
-.toggle.active::after {
-  left: 22px;
-}
-
-/* ========================================
-   COLOR DOTS
-   ======================================== */
+/* ─── Color dot ─────────────────────────── */
 .color-dot {
   width: 28px;
   height: 28px;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.15s ease;
-  border: 2px solid transparent;
+  transition: transform 0.15s;
+  border: 2.5px solid transparent;
 }
-
-.color-dot:hover {
-  transform: scale(1.15);
-}
-
+.color-dot:hover { transform: scale(1.12); }
 .color-dot.selected {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(0, 180, 216, 0.2);
+  box-shadow: 0 0 0 2px rgba(26,115,232,0.2);
 }
 
-/* ========================================
-   QR CODE
-   ======================================== */
-.qr-container {
-  background: white;
-  border-radius: var(--radius);
-  padding: 16px;
+/* ─── Table ─────────────────────────────── */
+.table-head {
+  display: grid;
+  padding: 10px 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-hover);
+}
+
+.table-row {
+  display: grid;
+  padding: 14px 20px;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: var(--bg-hover); }
+
+/* ─── Badge ─────────────────────────────── */
+.badge {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-sm);
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+}
+.badge-accent {
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
-/* ========================================
-   LINK ITEM
-   ======================================== */
-.link-item {
-  background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: all 0.15s ease;
-}
-
-.link-item:hover {
-  background: var(--bg-secondary);
-  border-color: var(--border-strong);
-}
-
-/* ========================================
-   STAT CARD
-   ======================================== */
+/* ─── Stat card ─────────────────────────── */
 .stat-card {
-  background: var(--bg-primary);
+  background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  transition: all 0.15s ease;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-xs);
 }
 
-.stat-card:hover {
-  box-shadow: var(--shadow-sm);
-}
-
-/* ========================================
-   MINI CHART
-   ======================================== */
+/* ─── Mini chart ────────────────────────── */
 .mini-chart {
-  height: 40px;
+  height: 36px;
   display: flex;
   align-items: flex-end;
   gap: 2px;
 }
-
 .mini-chart-bar {
   flex: 1;
-  background: linear-gradient(to top, var(--accent), var(--accent-light));
+  background: var(--accent);
+  opacity: 0.3;
   border-radius: 2px;
   min-height: 4px;
-  transition: height 0.3s ease;
 }
+.mini-chart-bar:last-child { opacity: 0.7; }
 
-/* ========================================
-   DASHED CREATE CARD
-   ======================================== */
+/* ─── Dashed card ───────────────────────── */
 .dashed-card {
-  border: 2px dashed var(--border-strong);
+  border: 2px dashed var(--border-hover);
   border-radius: var(--radius-lg);
   padding: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  background: var(--bg-primary);
+  transition: all 0.15s;
+  background: var(--bg-card);
 }
-
 .dashed-card:hover {
   border-color: var(--accent);
-  background: var(--accent-light);
+  background: var(--accent-bg);
 }
 
-/* ========================================
-   FAB BUTTON
-   ======================================== */
-.fab {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: none;
+/* ─── Link item ─────────────────────────── */
+.link-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: all 0.15s ease;
-  color: white;
-}
-
-.fab:hover {
-  transform: scale(1.05);
-  background: var(--accent-hover);
-}
-
-/* ========================================
-   ONBOARDING STEPS
-   ======================================== */
-.onboarding-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px;
-  border-radius: var(--radius);
-  background: var(--bg-primary);
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  text-align: center;
-  transition: all 0.15s ease;
+  background: var(--bg-card);
+  transition: all 0.15s;
+}
+.link-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
 }
 
-.onboarding-step.completed {
-  border-color: var(--accent);
-}
-
-.step-dot {
-  width: 20px;
-  height: 20px;
+/* ─── Onboarding ────────────────────────── */
+.step-check {
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
-
-.step-dot.completed {
+.step-check.done {
   background: var(--accent);
   border-color: var(--accent);
 }
 
-/* ========================================
-   PROGRESS BAR
-   ======================================== */
 .progress-bar {
   display: flex;
   gap: 4px;
-  align-items: center;
 }
-
-.progress-segment {
+.progress-seg {
   height: 4px;
-  width: 40px;
+  width: 32px;
   border-radius: 2px;
   background: var(--border);
-  transition: background 0.3s ease;
 }
-
-.progress-segment.filled {
+.progress-seg.filled {
   background: var(--accent);
 }
 
-/* ========================================
-   SCROLLBAR
-   ======================================== */
-::-webkit-scrollbar {
-  width: 6px;
-}
+/* ─── Scrollbar ─────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-hover); border-radius: 3px; }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: 3px;
-}
-
-/* ========================================
-   ANIMATIONS
-   ======================================== */
+/* ─── Animations ────────────────────────── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease forwards;
-}
+.fade-in { animation: fadeIn 0.25s ease forwards; }
 
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(100%); }
   to { opacity: 1; transform: translateY(0); }
 }
+.slide-up { animation: slideUp 0.25s ease forwards; }
 
-.animate-slide-up {
-  animation: slideUp 0.25s ease forwards;
-}
-
-/* ========================================
-   AVATAR
-   ======================================== */
-.avatar {
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.avatar-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+/* ─── Section heading ───────────────────── */
+.section-title {
+  font-size: 13px;
   font-weight: 600;
-  flex-shrink: 0;
-}
-
-/* ========================================
-   BADGE
-   ======================================== */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  font-size: 11px;
-  font-weight: 600;
-  border-radius: 10px;
-  background: var(--bg-tertiary);
   color: var(--text-secondary);
-}
-
-.badge-accent {
-  background: var(--accent-light);
-  color: var(--accent);
+  margin-bottom: 12px;
 }
