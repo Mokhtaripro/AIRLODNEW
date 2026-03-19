@@ -3,7 +3,7 @@ set -e
 
 # ============================================
 # AIRLOD Digital Card - VPS Deployment Script
-# Domain: new.airlodnetwork.com
+# Domain: card.airlod.com
 # Folder: /opt/airlod-card (separate from airlodavis)
 # ============================================
 
@@ -13,7 +13,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-DOMAIN="new.airlodnetwork.com"
+DOMAIN="card.airlod.com"
 EMAIL="contact@airlod.com"
 APP_DIR="/opt/airlod-card"
 APP_PORT="3001"
