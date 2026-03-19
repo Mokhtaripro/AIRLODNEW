@@ -1,0 +1,48 @@
+'use client';
+
+import { useState } from 'react';
+import { QrCode, Camera, Wifi } from 'lucide-react';
+
+export default function ScanPage() {
+  const [scanning, setScanning] = useState(false);
+
+  return (
+    <div className="p-4 pt-6 animate-fade-in">
+      <h1 className="text-2xl font-bold mb-6">Scan</h1>
+
+      <div className="flex flex-col items-center justify-center py-12">
+        {/* Scanner area */}
+        <div className="glass-card p-8 mb-6 flex flex-col items-center">
+          <div className="w-48 h-48 rounded-2xl border-2 border-dashed border-[var(--accent)] flex items-center justify-center mb-4 relative">
+            {scanning ? (
+              <div className="w-full h-1 bg-[var(--accent)] absolute top-0 animate-pulse rounded" />
+            ) : (
+              <QrCode className="w-16 h-16 text-[var(--text-muted)]" />
+            )}
+          </div>
+          <p className="text-sm text-[var(--text-secondary)] text-center mb-6">
+            Scan a QR code or NFC tag to view a digital business card
+          </p>
+          <button
+            onClick={() => setScanning(!scanning)}
+            className="btn-primary flex items-center gap-2"
+          >
+            <Camera className="w-4 h-4" />
+            {scanning ? 'Stop Scanning' : 'Start Camera'}
+          </button>
+        </div>
+
+        {/* NFC section */}
+        <div className="glass-card p-6 w-full flex flex-col items-center">
+          <div className="w-16 h-16 rounded-full bg-[var(--accent)]/10 flex items-center justify-center mb-4">
+            <Wifi className="w-8 h-8 text-[var(--accent)]" />
+          </div>
+          <h3 className="font-semibold mb-2">NFC Ready</h3>
+          <p className="text-sm text-[var(--text-secondary)] text-center">
+            Hold an NFC card or tag near your phone to read it
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
