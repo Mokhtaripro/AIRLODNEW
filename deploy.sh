@@ -2,27 +2,30 @@
 set -e
 
 # ============================================
-# AIRLOD VPS Deployment Script (Hostinger)
-# Compatible with existing apps on the VPS
+# AIRLOD Digital Card - VPS Deployment Script
+# Domain: new.airlodnetwork.com
+# Folder: /opt/airlod-card (separate from airlodavis)
 # ============================================
 
-# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-DOMAIN="app.airlod.com"
+DOMAIN="new.airlodnetwork.com"
 EMAIL="contact@airlod.com"
-APP_DIR="/opt/airlod"
+APP_DIR="/opt/airlod-card"
+APP_PORT="3001"
 
-echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}  AIRLOD Deployment Script (Hostinger)${NC}"
-echo -e "${BLUE}========================================${NC}"
+echo -e "${BLUE}============================================${NC}"
+echo -e "${BLUE}  AIRLOD Digital Card - Deployment${NC}"
+echo -e "${BLUE}  Domain: ${DOMAIN}${NC}"
+echo -e "${BLUE}  Dir:    ${APP_DIR}${NC}"
+echo -e "${BLUE}============================================${NC}"
 
 # Step 1: Install Docker if needed
-echo -e "\n${YELLOW}[1/5] Checking Docker...${NC}"
+echo -e "\n${YELLOW}[1/6] Checking Docker...${NC}"
 if ! command -v docker &> /dev/null; then
     echo "Installing Docker..."
     curl -fsSL https://get.docker.com -o get-docker.sh
@@ -30,147 +33,212 @@ if ! command -v docker &> /dev/null; then
     rm get-docker.sh
     systemctl enable docker
     systemctl start docker
-    echo -e "${GREEN}Docker installed successfully${NC}"
+    echo -e "${GREEN}Docker installed${NC}"
 else
-    echo -e "${GREEN}Docker already installed${NC}"
+    echo -e "${GREEN}Docker already installed: $(docker --version)${NC}"
 fi
 
 if ! docker compose version &> /dev/null; then
     apt-get install -y docker-compose-plugin 2>/dev/null || true
 fi
 
-# Step 2: Setup application
-echo -e "\n${YELLOW}[2/5] Setting up application...${NC}"
-mkdir -p $APP_DIR
-cd $APP_DIR
+# Step 2: Install Git if needed
+echo -e "\n${YELLOW}[2/6] Checking Git...${NC}"
+if ! command -v git &> /dev/null; then
+    apt-get install -y git
+fi
+echo -e "${GREEN}Git OK${NC}"
 
-# Step 3: Create .env.local if needed
+# Step 3: Clone or update the repo
+echo -e "\n${YELLOW}[3/6] Getting application code...${NC}"
+if [ -d "$APP_DIR" ]; then
+    echo "Updating existing installation..."
+    cd $APP_DIR
+    git pull origin claude/recreate-airlod-app-XeqVd || true
+else
+    echo "Cloning repository..."
+    git clone -b claude/recreate-airlod-app-XeqVd https://github.com/Mokhtaripro/AIRLODNEW.git $APP_DIR
+    cd $APP_DIR
+fi
+echo -e "${GREEN}Code ready${NC}"
+
+# Step 4: Create .env.local
+echo -e "\n${YELLOW}[4/6] Configuring environment...${NC}"
 if [ ! -f .env.local ]; then
-    echo -e "\n${YELLOW}[3/5] Creating .env.local...${NC}"
-    cat > .env.local << 'ENVEOF'
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
+    cat > .env.local << ENVEOF
 # App Configuration
-NEXT_PUBLIC_APP_URL=https://app.airlod.com
+NEXT_PUBLIC_APP_URL=https://${DOMAIN}
 NEXT_PUBLIC_SITE_URL=https://airlod.com
+NODE_ENV=production
 ENVEOF
-    echo -e "${RED}IMPORTANT: Edit .env.local with your Supabase credentials${NC}"
-    echo -e "${RED}Run: nano $APP_DIR/.env.local${NC}"
+    echo -e "${GREEN}.env.local created${NC}"
 else
     echo -e "${GREEN}.env.local already exists${NC}"
 fi
 
-# Step 4: Build and start the app container (port 3000 on localhost only)
-echo -e "\n${YELLOW}[4/5] Building and starting AIRLOD...${NC}"
+# Update docker-compose to use port 3001 (avoid conflict with other apps)
+cat > docker-compose.yml << DCEOF
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airlod-card
+    restart: always
+    ports:
+      - "127.0.0.1:${APP_PORT}:3000"
+    env_file:
+      - .env.local
+    networks:
+      - airlod-card-network
+
+networks:
+  airlod-card-network:
+    driver: bridge
+DCEOF
+
+# Step 5: Build and start
+echo -e "\n${YELLOW}[5/6] Building and starting AIRLOD...${NC}"
+docker compose down 2>/dev/null || true
 docker compose up -d --build
 
-echo -e "${GREEN}AIRLOD app running on 127.0.0.1:3000${NC}"
+echo -e "${GREEN}AIRLOD running on 127.0.0.1:${APP_PORT}${NC}"
 
-# Step 5: Configure reverse proxy
-echo -e "\n${YELLOW}[5/5] Reverse proxy configuration...${NC}"
+# Step 6: Configure reverse proxy
+echo -e "\n${YELLOW}[6/6] Configuring reverse proxy...${NC}"
 
-# Detect existing web server
-if command -v nginx &> /dev/null && systemctl is-active --quiet nginx; then
-    echo -e "${GREEN}Nginx detected on the system${NC}"
+# Check for Nginx
+if command -v nginx &> /dev/null; then
+    echo -e "${GREEN}Nginx detected${NC}"
 
-    # Create Nginx vhost for app.airlod.com
-    cat > /etc/nginx/sites-available/airlod << 'NGINXEOF'
+    # Check if sites-available exists (standard setup)
+    if [ -d /etc/nginx/sites-available ]; then
+        NGINX_CONF="/etc/nginx/sites-available/airlod-card"
+        NGINX_LINK="/etc/nginx/sites-enabled/airlod-card"
+    elif [ -d /etc/nginx/conf.d ]; then
+        NGINX_CONF="/etc/nginx/conf.d/airlod-card.conf"
+        NGINX_LINK=""
+    else
+        mkdir -p /etc/nginx/conf.d
+        NGINX_CONF="/etc/nginx/conf.d/airlod-card.conf"
+        NGINX_LINK=""
+    fi
+
+    cat > "$NGINX_CONF" << NGINXEOF
 server {
     listen 80;
-    server_name app.airlod.com;
+    server_name ${DOMAIN};
 
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+
+    # Proxy to AIRLOD card app
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:${APP_PORT};
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
         proxy_read_timeout 86400;
+    }
+
+    # Cache static assets
+    location /_next/static {
+        proxy_pass http://127.0.0.1:${APP_PORT};
+        add_header Cache-Control "public, max-age=31536000, immutable";
     }
 }
 NGINXEOF
 
-    ln -sf /etc/nginx/sites-available/airlod /etc/nginx/sites-enabled/airlod
-    nginx -t && systemctl reload nginx
-    echo -e "${GREEN}Nginx vhost created and loaded${NC}"
-
-    # SSL with certbot
-    echo -e "\n${YELLOW}Setting up SSL...${NC}"
-    if command -v certbot &> /dev/null; then
-        certbot --nginx -d $DOMAIN --email $EMAIL --agree-tos --non-interactive --redirect 2>/dev/null || {
-            echo -e "${YELLOW}Certbot failed - make sure DNS for $DOMAIN points to this server${NC}"
-            echo -e "Run manually: certbot --nginx -d $DOMAIN"
-        }
-    else
-        apt-get install -y certbot python3-certbot-nginx 2>/dev/null || true
-        certbot --nginx -d $DOMAIN --email $EMAIL --agree-tos --non-interactive --redirect 2>/dev/null || {
-            echo -e "${YELLOW}Certbot failed - make sure DNS for $DOMAIN points to this server${NC}"
-            echo -e "Run manually: certbot --nginx -d $DOMAIN"
-        }
+    if [ -n "$NGINX_LINK" ]; then
+        ln -sf "$NGINX_CONF" "$NGINX_LINK"
     fi
 
-elif command -v apache2 &> /dev/null && systemctl is-active --quiet apache2; then
-    echo -e "${GREEN}Apache detected on the system${NC}"
+    # Test and reload nginx
+    nginx -t && systemctl reload nginx
+    echo -e "${GREEN}Nginx vhost configured for ${DOMAIN}${NC}"
 
-    # Enable required modules
-    a2enmod proxy proxy_http proxy_wstunnel rewrite ssl headers 2>/dev/null
+    # SSL with Certbot
+    echo -e "\n${YELLOW}Setting up SSL certificate...${NC}"
+    if ! command -v certbot &> /dev/null; then
+        apt-get update -y
+        apt-get install -y certbot python3-certbot-nginx
+    fi
 
-    # Create Apache vhost for app.airlod.com
-    cat > /etc/apache2/sites-available/airlod.conf << 'APACHEEOF'
+    echo -e "${YELLOW}Make sure DNS A record for ${DOMAIN} points to this server IP!${NC}"
+    certbot --nginx -d $DOMAIN --email $EMAIL --agree-tos --non-interactive --redirect 2>&1 || {
+        echo -e "${RED}SSL setup failed. Make sure:${NC}"
+        echo -e "  1. DNS A record for ${DOMAIN} -> $(curl -s ifconfig.me)"
+        echo -e "  2. Port 80 and 443 are open"
+        echo -e "  3. Run manually: certbot --nginx -d ${DOMAIN}"
+    }
+
+elif command -v apache2 &> /dev/null; then
+    echo -e "${GREEN}Apache detected${NC}"
+
+    a2enmod proxy proxy_http proxy_wstunnel rewrite headers 2>/dev/null || true
+
+    cat > /etc/apache2/sites-available/airlod-card.conf << APACHEEOF
 <VirtualHost *:80>
-    ServerName app.airlod.com
+    ServerName ${DOMAIN}
 
     ProxyPreserveHost On
-    ProxyPass / http://127.0.0.1:3000/
-    ProxyPassReverse / http://127.0.0.1:3000/
+    ProxyPass / http://127.0.0.1:${APP_PORT}/
+    ProxyPassReverse / http://127.0.0.1:${APP_PORT}/
 
-    # WebSocket support
     RewriteEngine On
     RewriteCond %{HTTP:Upgrade} =websocket [NC]
-    RewriteRule /(.*) ws://127.0.0.1:3000/$1 [P,L]
+    RewriteRule /(.*) ws://127.0.0.1:${APP_PORT}/\$1 [P,L]
 
-    ErrorLog ${APACHE_LOG_DIR}/airlod-error.log
-    CustomLog ${APACHE_LOG_DIR}/airlod-access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/airlod-card-error.log
+    CustomLog \${APACHE_LOG_DIR}/airlod-card-access.log combined
 </VirtualHost>
 APACHEEOF
 
-    a2ensite airlod.conf
+    a2ensite airlod-card.conf
     systemctl reload apache2
-    echo -e "${GREEN}Apache vhost created and loaded${NC}"
+    echo -e "${GREEN}Apache vhost configured for ${DOMAIN}${NC}"
 
-    # SSL with certbot
-    echo -e "\n${YELLOW}Setting up SSL...${NC}"
     if ! command -v certbot &> /dev/null; then
-        apt-get install -y certbot python3-certbot-apache 2>/dev/null || true
+        apt-get install -y certbot python3-certbot-apache
     fi
-    certbot --apache -d $DOMAIN --email $EMAIL --agree-tos --non-interactive --redirect 2>/dev/null || {
-        echo -e "${YELLOW}Certbot failed - make sure DNS for $DOMAIN points to this server${NC}"
-        echo -e "Run manually: certbot --apache -d $DOMAIN"
+    certbot --apache -d $DOMAIN --email $EMAIL --agree-tos --non-interactive --redirect 2>&1 || {
+        echo -e "${RED}SSL failed. Run manually: certbot --apache -d ${DOMAIN}${NC}"
     }
-
 else
-    echo -e "${YELLOW}No Nginx or Apache detected.${NC}"
-    echo -e "The app is running on port 3000."
-    echo -e "You need to set up a reverse proxy manually."
-    echo -e "\nTo install Nginx and configure:"
-    echo -e "  apt install nginx certbot python3-certbot-nginx"
-    echo -e "  Then re-run this script"
+    echo -e "${YELLOW}No web server detected. Installing Nginx...${NC}"
+    apt-get update -y
+    apt-get install -y nginx certbot python3-certbot-nginx
+    systemctl enable nginx
+    systemctl start nginx
+    # Re-run this script after nginx is installed
+    echo -e "${GREEN}Nginx installed. Re-running proxy setup...${NC}"
+    exec "$0"
 fi
 
-echo -e "\n${GREEN}========================================${NC}"
-echo -e "${GREEN}  AIRLOD deployed successfully!${NC}"
-echo -e "${GREEN}========================================${NC}"
-echo -e "App URL: https://${DOMAIN}"
-echo -e "App Dir: ${APP_DIR}"
-echo -e "\nUseful commands:"
-echo -e "  cd $APP_DIR && docker compose logs -f app    # View logs"
-echo -e "  cd $APP_DIR && docker compose restart app    # Restart"
-echo -e "  cd $APP_DIR && docker compose down           # Stop"
-echo -e "  cd $APP_DIR && docker compose up -d --build  # Rebuild"
+# Show status
+echo ""
+echo -e "${GREEN}============================================${NC}"
+echo -e "${GREEN}  AIRLOD Digital Card - DEPLOYED!${NC}"
+echo -e "${GREEN}============================================${NC}"
+echo ""
+echo -e "  URL:        https://${DOMAIN}"
+echo -e "  App Dir:    ${APP_DIR}"
+echo -e "  Container:  airlod-card"
+echo -e "  Port:       127.0.0.1:${APP_PORT}"
+echo -e "  Server IP:  $(curl -s ifconfig.me 2>/dev/null || echo 'N/A')"
+echo ""
+echo -e "  ${YELLOW}IMPORTANT: Set DNS A record:${NC}"
+echo -e "  ${DOMAIN} -> $(curl -s ifconfig.me 2>/dev/null || echo 'YOUR_SERVER_IP')"
+echo ""
+echo -e "  Useful commands:"
+echo -e "    cd ${APP_DIR} && docker compose logs -f     # View logs"
+echo -e "    cd ${APP_DIR} && docker compose restart     # Restart"
+echo -e "    cd ${APP_DIR} && docker compose down        # Stop"
+echo -e "    cd ${APP_DIR} && docker compose up -d --build  # Rebuild"
+echo ""
