@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+*.md
+.env*.local
+docker-compose.yml
+nginx
+certbot
+deploy.sh

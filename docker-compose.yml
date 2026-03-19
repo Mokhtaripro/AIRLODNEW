@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: airlod-app
+    restart: always
+    ports:
+      - "127.0.0.1:3000:3000"
+    env_file:
+      - .env.local
+    networks:
+      - airlod-network
+
+networks:
+  airlod-network:
+    driver: bridge
