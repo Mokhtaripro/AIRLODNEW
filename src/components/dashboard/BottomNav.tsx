@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { CreditCard, Users, Share2, QrCode, Settings, PenSquare } from 'lucide-react';
+import { CreditCard, Users, Share2, QrCode, Settings, BarChart3 } from 'lucide-react';
 
 const navItems = [
   { href: '/dashboard/cards', label: 'Cards', icon: CreditCard },
@@ -17,7 +17,7 @@ export default function BottomNav() {
 
   return (
     <nav className="bottom-nav">
-      <div className="flex items-center justify-around max-w-[430px] mx-auto relative">
+      <div className="flex items-center justify-around max-w-[600px] mx-auto relative">
         {navItems.map((item) => {
           const isActive = pathname.startsWith(item.href);
           const Icon = item.icon;
@@ -43,7 +43,7 @@ export default function BottomNav() {
           className="absolute -top-6 left-1/2 -translate-x-1/2 fab"
           style={{ width: 48, height: 48 }}
         >
-          <PenSquare className="w-5 h-5" />
+          <BarChart3 className="w-5 h-5" />
         </Link>
       </div>
     </nav>

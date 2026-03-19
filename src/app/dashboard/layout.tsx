@@ -1,5 +1,6 @@
 import AppProvider from '@/components/dashboard/AppProvider';
 import BottomNav from '@/components/dashboard/BottomNav';
+import Sidebar from '@/components/dashboard/Sidebar';
 
 export default function DashboardLayout({
   children,
@@ -14,12 +15,17 @@ export default function DashboardLayout({
         <div className="orb orb-2" />
         <div className="orb orb-3" />
 
-        {/* Content */}
-        <div className="mobile-container relative z-10 pb-24">
-          {children}
+        {/* Desktop Sidebar */}
+        <Sidebar />
+
+        {/* Main Content */}
+        <div className="dashboard-content relative z-10">
+          <div className="dashboard-inner">
+            {children}
+          </div>
         </div>
 
-        {/* Bottom Navigation */}
+        {/* Mobile Bottom Navigation */}
         <BottomNav />
       </div>
     </AppProvider>

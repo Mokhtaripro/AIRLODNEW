@@ -17,16 +17,21 @@ export default function ContactsPage() {
   );
 
   return (
-    <div className="p-4 pt-6 animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Contacts</h1>
-        <button className="glass-button !p-2.5">
-          <UserPlus className="w-5 h-5" />
+    <div className="p-4 pt-6 md:p-8 animate-fade-in">
+      <div className="flex items-center justify-between mb-6 md:mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">Contacts</h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1 hidden md:block">
+            {filtered.length} contacts saved
+          </p>
+        </div>
+        <button className="btn-primary flex items-center gap-2 !py-2.5 !px-5">
+          <UserPlus className="w-4 h-4" /> <span className="hidden md:inline">Add Contact</span>
         </button>
       </div>
 
       {/* Search */}
-      <div className="relative mb-6">
+      <div className="relative mb-6 max-w-lg">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
         <input
           type="text"
@@ -37,11 +42,11 @@ export default function ContactsPage() {
         />
       </div>
 
-      {/* Contact Count */}
-      <p className="text-sm text-[var(--text-muted)] mb-4">{filtered.length} contacts</p>
+      {/* Contact Count (mobile) */}
+      <p className="text-sm text-[var(--text-muted)] mb-4 md:hidden">{filtered.length} contacts</p>
 
-      {/* Contact List */}
-      <div className="space-y-3">
+      {/* Contact Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
         {filtered.map((contact, i) => (
           <div key={contact.id} className="glass-card p-4 animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
             <div className="flex items-center gap-3">

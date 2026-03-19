@@ -16,6 +16,7 @@
   --success: #22c55e;
   --danger: #ef4444;
   --warning: #f59e0b;
+  --sidebar-width: 260px;
 }
 
 * {
@@ -32,7 +33,77 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Glassmorphism utilities */
+/* ========================================
+   SIDEBAR (Desktop only)
+   ======================================== */
+.sidebar {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width);
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-right: 1px solid var(--border-glass);
+    z-index: 40;
+  }
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  margin-bottom: 2px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.sidebar-item:hover {
+  color: var(--text-secondary);
+  background: var(--bg-glass);
+}
+
+.sidebar-item.active {
+  color: var(--text-primary);
+  background: var(--bg-glass-strong);
+}
+
+/* ========================================
+   DASHBOARD CONTENT
+   ======================================== */
+.dashboard-content {
+  min-height: 100vh;
+  padding-bottom: 100px; /* space for bottom nav on mobile */
+}
+
+.dashboard-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-content {
+    margin-left: var(--sidebar-width);
+    padding-bottom: 0;
+  }
+}
+
+/* ========================================
+   GLASSMORPHISM UTILITIES
+   ======================================== */
 .glass {
   background: var(--bg-glass);
   backdrop-filter: blur(20px);
@@ -140,7 +211,9 @@ html, body {
   transform: translateY(-1px);
 }
 
-/* Gradient backgrounds */
+/* ========================================
+   BACKGROUNDS & ORBS
+   ======================================== */
 .bg-mesh {
   background:
     radial-gradient(at 20% 20%, rgba(99, 102, 241, 0.15) 0, transparent 50%),
@@ -148,7 +221,6 @@ html, body {
     radial-gradient(at 50% 50%, rgba(236, 72, 153, 0.05) 0, transparent 50%);
 }
 
-/* Animated gradient orbs */
 .orb {
   position: fixed;
   border-radius: 50%;
@@ -191,37 +263,9 @@ html, body {
   66% { transform: translate(-20px, 20px); }
 }
 
-/* Glow effect */
-.glow {
-  box-shadow: 0 0 20px var(--accent-glow);
-}
-
-/* Stats card with red border like in mockup */
-.stat-card {
-  background: var(--bg-glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 16px;
-  padding: 16px;
-  transition: all 0.3s ease;
-}
-
-.stat-card:hover {
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
-}
-
-/* QR Code container */
-.qr-container {
-  background: white;
-  border-radius: 16px;
-  padding: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Bottom navigation */
+/* ========================================
+   BOTTOM NAVIGATION (Mobile only)
+   ======================================== */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -236,21 +280,55 @@ html, body {
   z-index: 50;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
+@media (min-width: 1024px) {
+  .bottom-nav {
+    display: none;
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+/* ========================================
+   PAGE HEADER (responsive)
+   ======================================== */
+.page-header {
+  padding: 16px 16px 0;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border-glass-strong);
-  border-radius: 3px;
+@media (min-width: 768px) {
+  .page-header {
+    padding: 32px 32px 0;
+  }
 }
 
-/* Link item styling */
+/* ========================================
+   CARDS & COMPONENTS
+   ======================================== */
+.glow {
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.stat-card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+}
+
+.qr-container {
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .link-item {
   background: var(--bg-glass);
   backdrop-filter: blur(10px);
@@ -269,7 +347,6 @@ html, body {
   border-color: var(--border-glass-strong);
 }
 
-/* Mini chart placeholder */
 .mini-chart {
   height: 40px;
   display: flex;
@@ -285,47 +362,6 @@ html, body {
   transition: height 0.3s ease;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease forwards;
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(100%); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.3s ease forwards;
-}
-
-/* Public card styles (light theme) */
-.public-card {
-  min-height: 100vh;
-}
-
-.public-card .glass {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Responsive */
-@media (min-width: 768px) {
-  .mobile-container {
-    max-width: 430px;
-    margin: 0 auto;
-    min-height: 100vh;
-    position: relative;
-    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
-  }
-}
-
-/* Dashed border card (create new) */
 .dashed-card {
   border: 2px dashed var(--border-glass-strong);
   border-radius: 20px;
@@ -354,6 +390,7 @@ html, body {
   cursor: pointer;
   transition: all 0.3s ease;
   border: 1px solid var(--border-glass);
+  flex-shrink: 0;
 }
 
 .toggle.active {
@@ -415,4 +452,53 @@ html, body {
 .fab:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 25px var(--accent-glow);
+}
+
+/* ========================================
+   SCROLLBAR
+   ======================================== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-glass-strong);
+  border-radius: 3px;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease forwards;
+}
+
+/* ========================================
+   PUBLIC CARD (Light theme)
+   ======================================== */
+.public-card {
+  min-height: 100vh;
+}
+
+.public-card .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.1);
 }

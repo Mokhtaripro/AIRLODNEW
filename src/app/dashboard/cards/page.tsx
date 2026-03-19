@@ -67,45 +67,52 @@ export default function CardsPage() {
   }
 
   return (
-    <div className="p-4 pt-6 animate-fade-in">
+    <div className="p-4 pt-6 md:p-8 animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="glass-input flex items-center gap-2 !w-auto !py-2 !px-4 flex-1 mr-3">
-          <span className="text-[var(--text-muted)] text-sm">
-            {currentCard?.title || 'Set Card Title'}
-          </span>
+      <div className="flex items-center justify-between mb-6 md:mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold">My Cards</h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1 hidden md:block">
+            Manage your digital business cards
+          </p>
         </div>
-        <button className="glass-button flex items-center gap-2 !py-2 !px-4 font-semibold">
-          Cards <ChevronDown className="w-4 h-4" />
+        <button
+          onClick={handleCreateCard}
+          className="btn-primary flex items-center gap-2 !py-2.5 !px-5"
+        >
+          <Plus className="w-4 h-4" /> New Card
         </button>
       </div>
 
-      {/* QR Code */}
+      {/* QR Code - shown on top for selected card */}
       {currentCard && (
-        <div className="flex justify-center mb-6 animate-fade-in">
-          <div className="qr-container shadow-lg">
-            <QRCodeSVG
-              value={getCardUrl(currentCard.code)}
-              size={160}
-              level="H"
-              includeMargin={false}
-              imageSettings={{
-                src: '',
-                height: 24,
-                width: 24,
-                excavate: true,
-              }}
-            />
+        <div className="flex justify-center mb-6 md:mb-8 animate-fade-in">
+          <div className="glass-card p-6 flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            <div className="qr-container shadow-lg">
+              <QRCodeSVG
+                value={getCardUrl(currentCard.code)}
+                size={160}
+                level="H"
+                includeMargin={false}
+              />
+            </div>
+            <div className="text-center md:text-left">
+              <p className="font-semibold text-lg">{currentCard.name || currentCard.title || 'New Card'}</p>
+              <p className="text-sm text-[var(--text-muted)] mt-1 mb-3">{currentCard.description || 'No description'}</p>
+              <code className="text-xs text-[var(--accent)] bg-[var(--bg-glass)] px-3 py-1.5 rounded-lg">
+                {getCardUrl(currentCard.code)}
+              </code>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Card List */}
-      <div className="space-y-4">
+      {/* Card Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {state.cards.map((card, index) => (
           <div
             key={card.id}
-            className="glass-card p-5 animate-fade-in"
+            className={`glass-card p-5 animate-fade-in ${selectedCardId === card.id ? 'ring-2 ring-[var(--accent)]' : ''}`}
             style={{ animationDelay: `${index * 0.1}s` }}
             onClick={() => setSelectedCardId(card.id)}
           >
@@ -116,9 +123,13 @@ export default function CardsPage() {
               </div>
             </div>
 
-            <h3 className="text-center text-lg font-medium mb-4">
+            <h3 className="text-center text-lg font-medium mb-1">
               {card.name || card.title || 'New Card'}
             </h3>
+            {card.description && (
+              <p className="text-center text-xs text-[var(--text-muted)] mb-4">{card.description}</p>
+            )}
+            {!card.description && <div className="mb-4" />}
 
             {/* Action Buttons */}
             <div className="flex items-center justify-center gap-3">

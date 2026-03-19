@@ -102,7 +102,7 @@ END:VCARD`;
 
   return (
     <div className="min-h-screen" style={{ background: `linear-gradient(135deg, ${themeColor}22, ${themeColor}08, white)` }}>
-      <div className="max-w-[430px] mx-auto min-h-screen">
+      <div className="max-w-[520px] mx-auto min-h-screen">
         {/* Header / Profile Section */}
         <div
           className="pt-12 pb-8 px-6 text-center relative overflow-hidden"
