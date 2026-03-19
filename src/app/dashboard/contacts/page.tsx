@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, UserPlus, Mail, Phone, Building2 } from 'lucide-react';
+import { Search, UserPlus, Download, Mail, Phone } from 'lucide-react';
 import { DEMO_CONTACTS } from '@/lib/mock-data';
 import { getInitials, timeAgo } from '@/lib/utils';
 import type { Contact } from '@/types';
@@ -17,63 +17,120 @@ export default function ContactsPage() {
   );
 
   return (
-    <div className="p-4 pt-6 md:p-8 animate-fade-in">
-      <div className="flex items-center justify-between mb-6 md:mb-8">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold">Contacts</h1>
-          <p className="text-sm text-[var(--text-muted)] mt-1 hidden md:block">
-            {filtered.length} contacts saved
-          </p>
+    <div className="p-4 pt-5 md:p-8 animate-fade-in">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl md:text-2xl font-bold">Contacts</h1>
+          <span className="badge">({filtered.length})</span>
         </div>
-        <button className="btn-primary flex items-center gap-2 !py-2.5 !px-5">
-          <UserPlus className="w-4 h-4" /> <span className="hidden md:inline">Add Contact</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button className="btn-secondary !text-sm hidden md:flex">
+            <Download className="w-4 h-4" /> Export
+          </button>
+          <button className="btn-dark !text-sm">
+            <UserPlus className="w-4 h-4" /> Create Lead
+          </button>
+        </div>
       </div>
 
       {/* Search */}
-      <div className="relative mb-6 max-w-lg">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
+      <div className="flex items-center gap-2 border border-[var(--border)] rounded-[var(--radius-sm)] px-3 py-2.5 bg-white mb-5 max-w-full">
+        <Search className="w-4 h-4 text-[var(--text-muted)] flex-shrink-0" />
         <input
           type="text"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search contacts..."
-          className="glass-input !pl-10"
+          placeholder="Search name, email or company"
+          className="bg-transparent border-none outline-none text-sm w-full text-[var(--text-primary)]"
         />
       </div>
 
-      {/* Contact Count (mobile) */}
-      <p className="text-sm text-[var(--text-muted)] mb-4 md:hidden">{filtered.length} contacts</p>
+      {/* Table (desktop) */}
+      <div className="card-flat overflow-hidden hidden md:block">
+        {/* Header */}
+        <div className="table-header" style={{ gridTemplateColumns: '40px 1fr 200px 120px 120px' }}>
+          <div>
+            <input type="checkbox" className="w-4 h-4 rounded" />
+          </div>
+          <div>Contact</div>
+          <div>Company</div>
+          <div>Date</div>
+          <div>Actions</div>
+        </div>
 
-      {/* Contact Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        {filtered.map((contact, i) => (
-          <div key={contact.id} className="glass-card p-4 animate-fade-in" style={{ animationDelay: `${i * 0.05}s` }}>
+        {/* Rows */}
+        {filtered.map((contact) => (
+          <div
+            key={contact.id}
+            className="table-row"
+            style={{ gridTemplateColumns: '40px 1fr 200px 120px 120px' }}
+          >
+            <div>
+              <input type="checkbox" className="w-4 h-4 rounded" />
+            </div>
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-[var(--accent)]/20 flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-[var(--accent-light)] flex items-center justify-center flex-shrink-0">
+                <span className="text-sm font-semibold text-[var(--accent)]">
+                  {getInitials(contact.name)}
+                </span>
+              </div>
+              <div className="min-w-0">
+                <p className="font-medium text-sm text-[var(--text-primary)]">{contact.name}</p>
+                <p className="text-xs text-[var(--text-muted)] truncate">{contact.email || ''}</p>
+              </div>
+            </div>
+            <div className="text-sm text-[var(--text-secondary)]">{contact.company || '—'}</div>
+            <div className="text-sm text-[var(--text-muted)]">{timeAgo(contact.created_at)}</div>
+            <div className="flex items-center gap-2">
+              {contact.email && (
+                <a href={`mailto:${contact.email}`} className="btn-ghost !p-1.5">
+                  <Mail className="w-4 h-4" />
+                </a>
+              )}
+              {contact.phone && (
+                <a href={`tel:${contact.phone}`} className="btn-ghost !p-1.5">
+                  <Phone className="w-4 h-4" />
+                </a>
+              )}
+              <button className="btn-ghost !p-1.5">
+                <Download className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {filtered.length === 0 && (
+          <div className="text-center py-12 text-[var(--text-muted)] text-sm">
+            No contacts found
+          </div>
+        )}
+      </div>
+
+      {/* Mobile list */}
+      <div className="space-y-2 md:hidden">
+        {filtered.map((contact) => (
+          <div key={contact.id} className="card-flat p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[var(--accent-light)] flex items-center justify-center flex-shrink-0">
                 <span className="text-sm font-semibold text-[var(--accent)]">
                   {getInitials(contact.name)}
                 </span>
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm">{contact.name}</p>
-                {contact.company && (
-                  <p className="text-xs text-[var(--text-muted)] flex items-center gap-1 mt-0.5">
-                    <Building2 className="w-3 h-3" /> {contact.company}
-                  </p>
-                )}
+                <p className="text-xs text-[var(--text-muted)] truncate">{contact.email || contact.company || ''}</p>
               </div>
               <span className="text-xs text-[var(--text-muted)]">{timeAgo(contact.created_at)}</span>
             </div>
-
-            <div className="flex gap-2 mt-3 pl-14">
+            <div className="flex gap-2 mt-3 ml-[52px]">
               {contact.email && (
-                <a href={`mailto:${contact.email}`} className="glass-button !p-2 !rounded-lg">
+                <a href={`mailto:${contact.email}`} className="btn-secondary !p-2 !text-xs">
                   <Mail className="w-3.5 h-3.5" />
                 </a>
               )}
               {contact.phone && (
-                <a href={`tel:${contact.phone}`} className="glass-button !p-2 !rounded-lg">
+                <a href={`tel:${contact.phone}`} className="btn-secondary !p-2 !text-xs">
                   <Phone className="w-3.5 h-3.5" />
                 </a>
               )}
@@ -81,12 +138,6 @@ export default function ContactsPage() {
           </div>
         ))}
       </div>
-
-      {filtered.length === 0 && (
-        <div className="text-center py-16">
-          <p className="text-[var(--text-muted)]">No contacts found</p>
-        </div>
-      )}
     </div>
   );
 }

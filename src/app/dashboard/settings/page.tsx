@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { User, Bell, Shield, Palette, HelpCircle, LogOut, ChevronRight, Wifi } from 'lucide-react';
 import { useApp } from '@/lib/store';
+import { getInitials } from '@/lib/utils';
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -33,42 +34,42 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="p-4 pt-6 md:p-8 animate-fade-in">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Settings</h1>
+    <div className="p-4 pt-5 md:p-8 animate-fade-in">
+      <h1 className="text-xl md:text-2xl font-bold mb-6">Settings</h1>
 
       <div className="max-w-2xl">
         {/* User card */}
-        <div className="glass-card p-4 md:p-5 mb-6 flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-[var(--accent)]/20 flex items-center justify-center">
+        <div className="card-flat p-4 md:p-5 mb-6 flex items-center gap-4">
+          <div className="w-14 h-14 rounded-full bg-[var(--accent-light)] flex items-center justify-center">
             <span className="text-lg font-bold text-[var(--accent)]">
-              {state.user?.full_name?.charAt(0) || 'U'}
+              {state.user?.full_name ? getInitials(state.user.full_name) : 'U'}
             </span>
           </div>
           <div className="flex-1">
-            <p className="font-semibold">{state.user?.full_name || 'User'}</p>
+            <p className="font-semibold text-[var(--text-primary)]">{state.user?.full_name || 'User'}</p>
             <p className="text-sm text-[var(--text-muted)]">{state.user?.email || 'demo@airlod.com'}</p>
           </div>
         </div>
 
         {/* Settings Groups */}
         {settingsGroups.map(group => (
-          <div key={group.title} className="mb-6">
-            <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3 px-1">
+          <div key={group.title} className="mb-5">
+            <h3 className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2 px-1">
               {group.title}
             </h3>
-            <div className="glass-card overflow-hidden divide-y divide-[var(--border-glass)]">
+            <div className="card-flat overflow-hidden divide-y divide-[var(--border)]">
               {group.items.map(item => {
                 const Icon = item.icon;
                 return (
                   <button
                     key={item.label}
-                    className="w-full flex items-center gap-3 p-4 hover:bg-[var(--bg-glass-hover)] transition-colors text-left"
+                    className="w-full flex items-center gap-3 p-4 hover:bg-[var(--bg-secondary)] transition-colors text-left"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-[var(--bg-glass-strong)] flex items-center justify-center">
-                      <Icon className="w-4.5 h-4.5 text-[var(--text-secondary)]" />
+                    <div className="w-9 h-9 rounded-xl bg-[var(--bg-tertiary)] flex items-center justify-center">
+                      <Icon className="w-4 h-4 text-[var(--text-secondary)]" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{item.label}</p>
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{item.label}</p>
                       <p className="text-xs text-[var(--text-muted)]">{item.desc}</p>
                     </div>
                     <ChevronRight className="w-4 h-4 text-[var(--text-muted)]" />
@@ -82,14 +83,13 @@ export default function SettingsPage() {
         {/* Logout */}
         <button
           onClick={() => router.push('/auth/login')}
-          className="glass-card w-full p-4 flex items-center gap-3 text-red-400 hover:bg-red-500/10 transition-colors"
+          className="card-flat w-full p-4 flex items-center gap-3 text-[var(--danger)] hover:bg-red-50 transition-colors"
         >
           <LogOut className="w-5 h-5" />
           <span className="text-sm font-medium">Sign Out</span>
         </button>
 
-        {/* Version - hidden on desktop (shown in sidebar) */}
-        <p className="text-center text-xs text-[var(--text-muted)] mt-8 lg:hidden">
+        <p className="text-center text-xs text-[var(--text-muted)] mt-6 lg:hidden">
           AIRLOD v2.0.0
         </p>
       </div>

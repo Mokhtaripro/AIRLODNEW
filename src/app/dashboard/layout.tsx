@@ -9,17 +9,12 @@ export default function DashboardLayout({
 }) {
   return (
     <AppProvider>
-      <div className="min-h-screen bg-mesh relative">
-        {/* Background orbs */}
-        <div className="orb orb-1" />
-        <div className="orb orb-2" />
-        <div className="orb orb-3" />
-
+      <div className="min-h-screen bg-[var(--bg-secondary)]">
         {/* Desktop Sidebar */}
         <Sidebar />
 
         {/* Main Content */}
-        <div className="dashboard-content relative z-10">
+        <div className="dashboard-content">
           <div className="dashboard-inner">
             {children}
           </div>

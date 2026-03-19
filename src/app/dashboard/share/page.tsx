@@ -40,67 +40,61 @@ export default function SharePage() {
   }
 
   return (
-    <div className="p-4 pt-6 md:p-8 animate-fade-in">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Share</h1>
+    <div className="p-4 pt-5 md:p-8 animate-fade-in">
+      <h1 className="text-xl md:text-2xl font-bold mb-6">Share</h1>
 
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-        {/* Left: QR Code */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* QR Code */}
         <div className="flex justify-center lg:justify-start">
-          <div className="glass-card p-6 md:p-8 inline-flex flex-col items-center gap-4">
-            <div className="qr-container">
+          <div className="card p-6 md:p-8 inline-flex flex-col items-center gap-4">
+            <div className="qr-container !shadow-none !p-0">
               <QRCodeSVG
                 value={cardUrl}
                 size={200}
                 level="H"
                 includeMargin={false}
+                fgColor={card.theme_color || '#000000'}
               />
             </div>
-            <p className="text-sm text-[var(--text-secondary)]">
-              Scan to view card
-            </p>
+            <p className="text-sm text-[var(--text-secondary)]">Scan to view card</p>
           </div>
         </div>
 
-        {/* Right: Actions */}
-        <div className="flex-1 min-w-0 max-w-lg">
-          {/* Card URL */}
-          <div className="glass-card p-4 mb-4">
+        {/* Actions */}
+        <div className="flex-1 max-w-lg space-y-4">
+          {/* URL */}
+          <div className="card-flat p-4">
             <p className="text-xs text-[var(--text-muted)] mb-2">Card URL</p>
             <div className="flex items-center gap-2">
               <code className="text-sm text-[var(--accent)] flex-1 truncate">{cardUrl}</code>
-              <button onClick={handleCopy} className="glass-button !p-2">
-                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+              <button onClick={handleCopy} className="btn-secondary !p-2">
+                {copied ? <Check className="w-4 h-4 text-[var(--success)]" /> : <Copy className="w-4 h-4" />}
               </button>
             </div>
           </div>
 
-          {/* Share Actions */}
-          <div className="space-y-3 mb-6">
-            <button onClick={handleShare} className="btn-primary w-full flex items-center justify-center gap-2">
+          <div className="space-y-2">
+            <button onClick={handleShare} className="btn-dark w-full flex items-center justify-center gap-2 !py-3">
               <Share2 className="w-4 h-4" /> Share Card
             </button>
-            <button onClick={handleCopy} className="glass-button w-full flex items-center justify-center gap-2">
+            <button onClick={handleCopy} className="btn-secondary w-full flex items-center justify-center gap-2 !py-3">
               <Copy className="w-4 h-4" /> Copy Link
             </button>
-            <button className="glass-button w-full flex items-center justify-center gap-2">
+            <button className="btn-secondary w-full flex items-center justify-center gap-2 !py-3">
               <Download className="w-4 h-4" /> Download QR Code
             </button>
           </div>
 
-          {/* NFC Info */}
-          <div className="glass-card p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center flex-shrink-0">
-                <Wifi className="w-5 h-5 text-[var(--accent)]" />
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold mb-1">NFC Products</h3>
-                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
-                  Connect this card to your AIRLOD NFC product. When someone taps your NFC card/tag,
-                  they&apos;ll be redirected to your digital business card at{' '}
-                  <span className="text-[var(--accent)]">{cardUrl}</span>
-                </p>
-              </div>
+          {/* NFC */}
+          <div className="card-flat p-4 flex items-start gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[var(--accent-light)] flex items-center justify-center flex-shrink-0">
+              <Wifi className="w-5 h-5 text-[var(--accent)]" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold mb-1">NFC Products</h3>
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                Connect this card to your AIRLOD NFC product for instant contact sharing.
+              </p>
             </div>
           </div>
         </div>
